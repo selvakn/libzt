@@ -10,13 +10,13 @@ package libzt
 */
 import "C"
 import (
-	"unsafe"
-	"syscall"
-	"net"
-	"errors"
-	"encoding/binary"
-	"strings"
 	"bytes"
+	"encoding/binary"
+	"errors"
+	"net"
+	"strings"
+	"syscall"
+	"unsafe"
 )
 
 const ZT_MAX_IPADDR_LEN = C.ZT_MAX_IPADDR_LEN
@@ -26,8 +26,8 @@ type ZT struct {
 	homePath string
 }
 
-func Init(id string, homePath string) (*ZT) {
-	zt := &ZT{id: id, homePath: homePath }
+func Init(id string, homePath string) *ZT {
+	zt := &ZT{id: id, homePath: homePath}
 	C.zts_simple_start(C.CString(homePath), C.CString(id))
 	return zt
 }

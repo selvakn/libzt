@@ -1,10 +1,10 @@
 package libzt
 
 import (
-	"net"
 	"errors"
-	"syscall"
 	"fmt"
+	"net"
+	"syscall"
 )
 
 type TCP6Listener struct {
@@ -20,10 +20,10 @@ func (l *TCP6Listener) Accept() (net.Conn, error) {
 	}
 
 	conn := &Connection{
-		fd:         acceptedFd,
+		fd: acceptedFd,
 
-		localIP:    l.localIP,
-		localPort:  l.localPort,
+		localIP:   l.localIP,
+		localPort: l.localPort,
 
 		remoteIp:   net.IP(sockAddr.Addr[:]),
 		remotePort: sockAddr.Port,
