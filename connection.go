@@ -26,7 +26,11 @@ func (c *Connection) Write(b []byte) (n int, err error) {
 }
 
 func (c *Connection) Close() error {
-	return syscall.Close(c.fd)
+	val := close(c.fd)
+	if val < 0 {
+		return errors.New("Error closing socket")
+	}
+	return nil
 }
 
 func (c *Connection) LocalAddr() net.Addr {

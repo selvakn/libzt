@@ -100,7 +100,7 @@ func htonl(number uint16) uint16 {
 }
 
 func close(fd int) int {
-	return (int)(C.zts_close(cint(fd)))
+	return (int)(C.zts_shutdown(cint(fd), 3))
 }
 
 func socket(family int, socketType int, protocol int) int {
