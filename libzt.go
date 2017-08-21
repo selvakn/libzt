@@ -17,6 +17,7 @@ import (
 	"strings"
 	"syscall"
 	"unsafe"
+	"fmt"
 )
 
 const ZT_MAX_IPADDR_LEN = C.ZT_MAX_IPADDR_LEN
@@ -68,6 +69,41 @@ func (zt *ZT) Listen6(port uint16) (net.Listener, error) {
 	}
 
 	return &TCP6Listener{fd: fd, localIP: zt.GetIPv6Address()}, nil
+}
+
+func (zt *ZT) Listen6UDP(port uint16) (net.PacketConn, error) {
+	fd := socket(syscall.AF_INET6, syscall.SOCK_DGRAM, syscall.IPPROTO_UDP)
+	if fd < 0 {
+		return nil, errors.New("Error in opening socket")
+	}
+
+	serverSocket := syscall.RawSockaddrInet6{Flowinfo: 0, Family: syscall.AF_INET6, Port: htonl(port)}
+	retVal := bind6(fd, serverSocket)
+	if retVal < 0 {
+		return nil, errors.New("ERROR on binding")
+	}
+
+	return &PacketConnection{fd: fd, localIP: zt.GetIPv6Address(), localPort: port}, nil
+}
+
+func (zt *ZT) Dial6UDP(ip string, port uint16) (net.Conn, error) {
+	clientSocket := syscall.RawSockaddrInet6{Flowinfo: 0, Family: syscall.AF_INET6, Port: htonl(port), Addr: parseIPV6(ip)}
+
+	fmt.Println("1")
+	fd := socket(30, 2, 17)
+	fmt.Println("2")
+	if fd < 0 {
+		return nil, errors.New("Error in opening socket")
+	}
+
+	conn := &Connection{
+		fd:         fd,
+		localIP:    zt.GetIPv6Address(),
+		localPort:  clientSocket.Port,
+		remoteIp:   net.ParseIP(ip),
+		remotePort: port,
+	}
+	return conn, nil
 }
 
 func (zt *ZT) Connect6(ip string, port uint16) (net.Conn, error) {
